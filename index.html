@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>3D 大富翁</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+      }
+    }
+    </script>
+</head>
+<body>
+
+<div class="ui">
+    <h1>3D 大富翁</h1>
+    <p>回合：<span id="turn">1</span></p>
+    <p>骰子：<span id="dice">-</span></p>
+    <p>位置：<span id="pos">0</span></p>
+    <button id="roll">擲骰</button>
+</div>
+
+<canvas id="three"></canvas>
+
+<script type="module" src="main.js"></script>
+
+</body>
+</html>
