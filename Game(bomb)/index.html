@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>一戰模擬器</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>一戰模擬器</h1>
+        
+        <div class="status-bar">
+            <div class="timer-box">⏳ 時間：<span id="timer">180</span></div>
+            <div class="mine-count">🚩 剩餘地雷：<span id="mines-left">20</span></div>
+        </div>
+
+        <div id="board" class="game-board"></div>
+
+        <div id="message">按下開始按鈕開始逃難</div>
+
+        <div class="controls">
+            <button id="start-btn">開始遊戲</button>
+        </div>
+        
+        <p class="hint">左鍵：踩下去嘿嘿 / 右鍵：立flag</p>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
