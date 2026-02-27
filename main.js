@@ -12,7 +12,7 @@ const camera = new THREE.PerspectiveCamera(
     0.1,
     1000
 );
-camera.position.set(5, 5, 5);
+camera.position.set(15, 12, 15);
 
 const renderer = new THREE.WebGLRenderer({
     canvas: document.getElementById("three"),
@@ -29,49 +29,50 @@ const light = new THREE.DirectionalLight(0xffffff, 1);
 light.position.set(5, 10, 7);
 scene.add(light);
 
-const ambient = new THREE.AmbientLight(0xffffff, 0.5);
+const ambient = new THREE.AmbientLight(0xffffff, 0.6);
 scene.add(ambient);
 
 // ===== 地板 =====
 const plane = new THREE.Mesh(
-    new THREE.PlaneGeometry(20, 20),
+    new THREE.PlaneGeometry(50, 50),
     new THREE.MeshStandardMaterial({ color: 0x888888 })
 );
 plane.rotation.x = -Math.PI / 2;
 scene.add(plane);
 
-// ===== 載入骰子模型 =====
-const loader_cube = new GLTFLoader();
-let cube = null;
-
-loader_cube.load(
-    "cube.glb",
-    (gltf) => {
-        cube = gltf.scene;
-        cube.position.set(0, 0.5, 0);
-        scene.add(cube);
-        console.log("cube.glb 載入成功");
-    },
-    undefined,
-    (error) => {
-        console.error("cube.glb 載入失敗", error);
-    }
-);
-
-// ===== 載入 GLB（如果有 map.glb）=====
+// ===== 載入地圖 =====
 const loader = new GLTFLoader();
-loader.load(
-    "map.glb",
-    (gltf) => {
-        gltf.scene.position.set(0, 0, 0);
-        scene.add(gltf.scene);
-        console.log("GLB 載入成功");
-    },
-    undefined,
-    (error) => {
-        console.log("沒有 map.glb 或載入失敗，使用測試方塊");
-    }
-);
+loader.load("map.glb", (gltf) => {
+    scene.add(gltf.scene);
+});
+
+let player1 = null;
+let player2 = null;
+let player3 = null;
+
+// chil guy
+loader.load("chill_guy.glb", (gltf) => {
+    player1 = gltf.scene;
+    player1.scale.set(0.5, 0.5, 0.5);
+    player1.position.set(9, 1.5, 8);
+    scene.add(player1);
+});
+
+// alan walker
+loader.load("blue_smurf_cat.glb", (gltf) => {
+    player2 = gltf.scene;
+    player2.scale.set(1.5, 1.5, 1.5);
+    player2.position.set(9, 0, 7);
+    scene.add(player2);
+});
+
+// ina
+loader.load("takodachi.glb", (gltf) => {
+    player3 = gltf.scene;
+    player3.scale.set(0.3, 0.3, 0.3);
+    player3.position.set(9, 1, 7);
+    scene.add(player3);
+});
 
 // ===== 動畫 =====
 function animate() {
@@ -93,6 +94,9 @@ let turn = 1;
 let position = 0;
 
 document.getElementById("roll").addEventListener("click", () => {
+
+    if (!player1) return;
+
     const dice = Math.floor(Math.random() * 6) + 1;
     position += dice;
 
@@ -100,5 +104,6 @@ document.getElementById("roll").addEventListener("click", () => {
     document.getElementById("pos").textContent = position;
     document.getElementById("turn").textContent = turn++;
 
-    cube.position.x = position % 10;
+    // 只讓 player1 移動（測試）
+    player1.position.x = 8 + position;
 });
