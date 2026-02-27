@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>倒退嚕小恐龍</title>
+    <style>
+        /* --- CSS 樣式區 --- */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #222;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            user-select: none; /* 防止選取文字 */
+        }
+
+        .container {
+            text-align: center;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        h1 { color: #f1c40f; margin-bottom: 10px; }
+
+        /* 狀態列 */
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 20px;
+            background: #333;
+            border-radius: 8px 8px 0 0;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        #timer { color: #e74c3c; }
+        #speed-display { color: #3498db; }
+
+        /* 遊戲視窗 */
+        #game-window {
+            position: relative;
+            width: 100%;
+            height: 250px;
+            background-color: #fff;
+            border: 4px solid #333;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+
+        /* 地板 */
+        #ground {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 10px;
+            background: linear-gradient(to right, #333 50%, transparent 50%);
+            background-size: 40px 100%;
+        }
+
+        /* 地板滾動動畫 Class */
+        .scrolling-bg {
+            animation: scrollGround 0.5s linear infinite;
+        }
+
+        @keyframes scrollGround {
+            from { background-position: 0 0; }
+            to { background-position: -40px 0; }
+        }
+
+        /* 天空 */
+        #sky {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            color: #bbb;
+            font-size: 2rem;
+            z-index: 1;
+        }
+
+        /* 小恐龍 */
+        #dino {
+            position: absolute;
+            bottom: 10px;
+            left: 50px;
+            width: 50px;
+            height: 50px;
+            font-size: 45px;
+            z-index: 10;
+            line-height: 1;
+            /* 修正 emoji 對齊問題 */
+            display: flex;
+            align-items: flex-end; 
+        }
+
+        /* 跳躍動畫 */
+        .anim-jump-low { animation: jumpLow 0.5s ease-in-out; }
+        @keyframes jumpLow {
+            0% { bottom: 10px; }
+            50% { bottom: 90px; }
+            100% { bottom: 10px; }
+        }
+
+        .anim-jump-high { animation: jumpHigh 0.7s ease-in-out; }
+        @keyframes jumpHigh {
+            0% { bottom: 10px; }
+            50% { bottom: 160px; }
+            100% { bottom: 10px; }
+        }
+
+        /* 障礙物 */
+        .cactus {
+            position: absolute;
+            bottom: 10px;
+            font-size: 30px;
+            line-height: 1;
+            z-index: 5;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        .cactus-small {
+            height: 40px;
+            width: 30px;
+            font-size: 35px;
+        }
+        .cactus-small::after { content: '🌵'; }
+
+        .cactus-tall {
+            height: 70px;
+            width: 40px;
+            font-size: 55px;
+        }
+        .cactus-tall::after { content: '🌵'; filter: hue-rotate(45deg); }
+
+        /* 控制區 */
+        #message {
+            margin: 10px 0;
+            height: 1.5rem;
+            color: #e67e22;
+            font-weight: bold;
+        }
+
+        .controls-area {
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+        }
+
+        button {
+            padding: 10px 25px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.1s;
+        }
+        button:active { transform: scale(0.95); }
+
+        #start-btn { background-color: #f1c40f; color: #333; width: 220px; }
+        #start-btn:disabled { background-color: #555; color: #aaa; cursor: default; transform: none; box-shadow: none; }
+
+        .jump-controls { display: flex; gap: 20px; }
+        .action-btn { color: white; min-width: 140px; }
+        .small-jump { background-color: #27ae60; }
+        .big-jump { background-color: #e67e22; }
+
+        .hint { font-size: 0.9rem; color: #888; margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Michel小恐龍🦖</h1>
+        
+        <div class="status-bar">
+            <div class="timer-box">剩餘時間：<span id="timer">60</span> 秒</div>
+            <div class="speed-box">速度：<span id="speed-display">1.0</span>x</div>
+        </div>
+
+        <div id="game-window">
+            <div id="sky">☁️ &nbsp; &nbsp; ☁️</div>
+            <div id="dino">🦖</div>
+            <div id="ground"></div>
+        </div>
+
+        <div id="message">READY？</div>
+
+        <div class="controls-area">
+            <button id="start-btn" onclick="startGame()">GO!!!</button>
+            <div class="jump-controls">
+                <button class="action-btn small-jump" onclick="jumpLow()">小跳 (C鍵)</button>
+                <button class="action-btn big-jump" onclick="jumpHigh()">大跳.JPG (SPACE)</button>
+            </div>
+        </div>
+        <p class="hint">HINT：高仙人掌用大跳，矮仙人掌用小跳。</p>
+    </div>
+
+    <script>
+        /* --- JavaScript 邏輯區 --- */
+        
+        // 取得 DOM 元素
+        const dino = document.getElementById('dino');
+        const gameWindow = document.getElementById('game-window');
+        const ground = document.getElementById('ground');
+        const timerEl = document.getElementById('timer');
+        const speedEl = document.getElementById('speed-display');
+        const msgEl = document.getElementById('message');
+        const startBtn = document.getElementById('start-btn');
+
+        // 遊戲變數
+        let isGameRunning = false;
+        let hasGameEnded = false; // 防止重複開始
+        let frameId = null;       // 動畫 ID
+        let gameTime = 60;        // 遊戲時間
+        let timerInterval = null; // 計時器 ID
+
+        // 速度與障礙物變數
+        let gameSpeed = 5;       // 初始像素移動速度
+        let speedMultiplier = 1; // 速度倍率
+        let obstacles = [];      // 障礙物陣列
+        let spawnTimer = 0;      // 產生障礙物的計數器
+
+        // 鍵盤監聽
+        document.addEventListener('keydown', (e) => {
+            if (!isGameRunning) return; // 遊戲沒開始按鍵沒反應
+            
+            // 空白鍵 或 上箭頭 -> 大跳
+            if (e.code === 'Space' || e.code === 'ArrowUp') {
+                e.preventDefault(); // 防止網頁滾動
+                jumpHigh();
+            }
+            // C鍵 或 下箭頭 -> 小跳
+            if (e.code === 'KeyC' || e.code === 'ArrowDown') {
+                e.preventDefault();
+                jumpLow();
+            }
+        });
+
+        // --- 核心功能：開始遊戲 ---
+        function startGame() {
+            // 如果遊戲正在進行 或 已經結束過，就不能再執行
+            if (isGameRunning || hasGameEnded) return;
+
+            console.log("遊戲開始！"); // 除錯訊息
+
+            isGameRunning = true;
+            
+            // 更新 UI
+            startBtn.disabled = true;
+            startBtn.innerText = "遊戲進行中...";
+            msgEl.innerText = "奔跑中...";
+            
+            // 啟動地板動畫
+            ground.classList.add('scrolling-bg');
+
+            // 啟動倒數計時器
+            timerInterval = setInterval(() => {
+                gameTime--;
+                timerEl.innerText = gameTime;
+                
+                // 每 5 秒加速
+                if (gameTime % 5 === 0) {
+                    increaseSpeed();
+                }
+
+                // 時間到，獲勝
+                if (gameTime <= 0) {
+                    gameWin();
+                }
+            }, 1000);
+
+            // 啟動遊戲主迴圈 (處理動畫與碰撞)
+            gameLoop();
+        }
+
+        // --- 核心功能：遊戲主迴圈 ---
+        function gameLoop() {
+            if (!isGameRunning) return;
+
+            // 1. 產生障礙物邏輯
+            spawnTimer--;
+            if (spawnTimer <= 0) {
+                spawnObstacle();
+                // 根據速度決定下一次出現的時間 (速度越快，間隔越短)
+                let minFrames = 60 / speedMultiplier;
+                let maxFrames = 140 / speedMultiplier;
+                spawnTimer = Math.floor(Math.random() * (maxFrames - minFrames + 1) + minFrames);
+            }
+
+            // 2. 移動障礙物 & 碰撞偵測
+            moveObstacles();
+
+            // 3. 繼續下一幀
+            frameId = requestAnimationFrame(gameLoop);
+        }
+
+        // --- 產生障礙物 ---
+        function spawnObstacle() {
+            const obstacle = document.createElement('div');
+            obstacle.classList.add('cactus');
+            
+            // 30% 機率是高仙人掌
+            const isTall = Math.random() > 0.7;
+            if (isTall) {
+                obstacle.classList.add('cactus-tall');
+            } else {
+                obstacle.classList.add('cactus-small');
+            }
+
+            // 設定初始位置 (畫面最右邊外側)
+            obstacle.style.left = '800px'; 
+            
+            gameWindow.appendChild(obstacle);
+            obstacles.push(obstacle);
+        }
+
+        // --- 移動與碰撞偵測 ---
+        function moveObstacles() {
+            const dinoRect = dino.getBoundingClientRect();
+
+            for (let i = 0; i < obstacles.length; i++) {
+                let obs = obstacles[i];
+                
+                // 取得目前位置並移動
+                let currentLeft = parseFloat(obs.style.left);
+                currentLeft -= gameSpeed;
+                obs.style.left = currentLeft + 'px';
+
+                // --- 碰撞偵測區 ---
+                const obsRect = obs.getBoundingClientRect();
+                const padding = 15; // 碰撞寬容度 (數值越大越難撞到)
+
+                // 檢查重疊
+                if (
+                    dinoRect.right - padding > obsRect.left + padding &&
+                    dinoRect.left + padding < obsRect.right - padding &&
+                    dinoRect.bottom - padding > obsRect.top + padding 
+                ) {
+                    gameOver();
+                    return; // 結束迴圈
+                }
+
+                // --- 移除區 ---
+                // 如果障礙物跑出左邊畫面，就刪除
+                if (currentLeft < -100) {
+                    obs.remove();
+                    obstacles.splice(i, 1);
+                    i--;
+                }
+            }
+        }
+
+        // --- 增加速度 ---
+        function increaseSpeed() {
+            if(speedMultiplier < 2.5) {
+                speedMultiplier += 0.1;
+                gameSpeed = 5 * speedMultiplier;
+                speedEl.innerText = speedMultiplier.toFixed(1);
+                
+                // 加速地板動畫
+                ground.style.animationDuration = (0.5 / speedMultiplier) + 's';
+            }
+        }
+
+        // --- 跳躍功能 ---
+        function jumpLow() {
+            if(!isGameRunning) return;
+            // 防止連跳
+            if (dino.classList.contains('anim-jump-low') || dino.classList.contains('anim-jump-high')) return;
+            
+            dino.classList.add('anim-jump-low');
+            // 動畫結束後移除 class
+            setTimeout(() => dino.classList.remove('anim-jump-low'), 500);
+        }
+
+        function jumpHigh() {
+            if(!isGameRunning) return;
+            if (dino.classList.contains('anim-jump-low') || dino.classList.contains('anim-jump-high')) return;
+            
+            dino.classList.add('anim-jump-high');
+            setTimeout(() => dino.classList.remove('anim-jump-high'), 700);
+        }
+
+        // --- 遊戲結束處理 ---
+        function gameOver() {
+            stopGame();
+            msgEl.innerHTML = "<span style='color:red; font-size:1.5rem'>❌ 哈哈炸了！</span>";
+            dino.innerText = "💩"; // 恐龍變臉
+        }
+
+        function gameWin() {
+            stopGame();
+            msgEl.innerHTML = "<span style='color:#27ae60; font-size:1.5rem'>🏆 哈哈贏了！</span>";
+            dino.innerText = "🫦"; // 恐龍變臉
+        }
+
+        function stopGame() {
+            isGameRunning = false;
+            hasGameEnded = true; // 鎖定遊戲，不讓再次開始
+            
+            clearInterval(timerInterval);
+            cancelAnimationFrame(frameId);
+            
+            ground.classList.remove('scrolling-bg'); // 停止地板
+            
+            // 永久鎖定按鈕
+            startBtn.disabled = true;
+            startBtn.innerText = "遊戲結束 (請F5重整)";
+            startBtn.style.cursor = "not-allowed";
+        }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,162 @@
+/* 全局設定 */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #222;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+.container {
+    text-align: center;
+    width: 100%;
+    max-width: 800px;
+}
+
+h1 { color: #f1c40f; margin-bottom: 10px; }
+
+/* 狀態列 */
+.status-bar {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background: #333;
+    border-radius: 8px 8px 0 0;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+#timer { color: #e74c3c; }
+#speed-display { color: #3498db; }
+
+/* 遊戲視窗 */
+#game-window {
+    position: relative;
+    width: 100%;
+    height: 250px;
+    background-color: #fff;
+    border: 4px solid #333;
+    overflow: hidden;
+    margin: 0 auto;
+}
+
+/* 地板 */
+#ground {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 10px;
+    background: linear-gradient(to right, #333 50%, transparent 50%);
+    background-size: 40px 100%;
+}
+
+/* 地板滾動動畫 */
+.scrolling-bg {
+    animation: scrollGround 0.5s linear infinite;
+}
+
+@keyframes scrollGround {
+    from { background-position: 0 0; }
+    to { background-position: -40px 0; }
+}
+
+/* 天空 */
+#sky {
+    position: absolute;
+    top: 20px;
+    width: 100%;
+    color: #bbb;
+    font-size: 2rem;
+}
+
+/* 小恐龍 */
+#dino {
+    position: absolute;
+    bottom: 10px;
+    left: 50px;
+    width: 50px;
+    height: 50px;
+    font-size: 45px;
+    z-index: 10;
+    line-height: 1;
+}
+
+/* 跳躍動畫 */
+.anim-jump-low { animation: jumpLow 0.5s ease-in-out; }
+@keyframes jumpLow {
+    0% { bottom: 10px; }
+    50% { bottom: 90px; }
+    100% { bottom: 10px; }
+}
+
+.anim-jump-high { animation: jumpHigh 0.7s ease-in-out; }
+@keyframes jumpHigh {
+    0% { bottom: 10px; }
+    50% { bottom: 160px; }
+    100% { bottom: 10px; }
+}
+
+/* 障礙物 */
+.cactus {
+    position: absolute;
+    bottom: 10px;
+    font-size: 30px;
+    line-height: 1;
+    z-index: 5;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.cactus-small {
+    height: 40px;
+    width: 30px;
+    font-size: 35px;
+}
+.cactus-small::after { content: '🌵'; }
+
+.cactus-tall {
+    height: 70px;
+    width: 40px;
+    font-size: 55px;
+}
+.cactus-tall::after { content: '🌵'; filter: hue-rotate(45deg); }
+
+/* 控制區 */
+#message {
+    margin: 10px 0;
+    height: 1.5rem;
+    color: #e67e22;
+    font-weight: bold;
+}
+
+.controls-area {
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+
+button {
+    padding: 10px 25px;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: transform 0.1s;
+}
+button:active { transform: scale(0.95); }
+
+#start-btn { background-color: #f1c40f; color: #333; width: 220px; }
+#start-btn:disabled { background-color: #555; color: #aaa; cursor: default; transform: none; box-shadow: none; }
+
+.jump-controls { display: flex; gap: 20px; }
+.action-btn { color: white; min-width: 140px; }
+.small-jump { background-color: #27ae60; }
+.big-jump { background-color: #e67e22; }
+
+.hint { font-size: 0.9rem; color: #888; margin-top: 15px; }
