@@ -93,6 +93,7 @@ window.addEventListener("resize", () => {
 let turn = 1;
 let position = 0;
 
+
 document.getElementById("roll").addEventListener("click", () => {
 
     if (!player1) return;
