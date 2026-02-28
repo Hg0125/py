@@ -500,12 +500,7 @@ animate();
 window.addEventListener("resize", () => {
   camera.aspect = innerWidth / innerHeight;
   camera.updateProjectionMatrix();
-<<<<<<< HEAD
-  renderer.setSize(window.innerWidth, window.innerHeight);
-});
-=======
-  renderer.setSize(innerWidth, innerHeight);
-});
+
 
 /* ========= 載入 ========= */
 loader.load("map.glb", (gltf) => {
@@ -531,4 +526,4 @@ loader.load(players[0].url, (g1) => {
 
 setRollEnabled(true);
 updateHUD();
->>>>>>> 7dbe9fa (update events/assets and ignore DS_Store)
+
