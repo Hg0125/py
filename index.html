@@ -1,32 +1,75 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <title>3D 大富翁</title>
+  <meta charset="UTF-8" />
+  <title>3D 大富翁</title>
+  <link rel="stylesheet" href="style.css" />
 
-    <link rel="stylesheet" href="style.css">
-
-    <script type="importmap">
-    {
-      "imports": {
-        "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
-      }
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
     }
-    </script>
+  }
+  </script>
 </head>
+
 <body>
+  <!-- 左上操作面板 -->
+  <div class="ui-left">
+    <h2>3D 大富翁</h2>
 
-<div class="ui">
-    <h1>3D 大富翁</h1>
-    <p>回合：<span id="turn">1</span></p>
-    <p>骰子：<span id="dice">-</span></p>
-    <p>位置：<span id="pos">0</span></p>
-    
+    <div class="row">
+      <span>目前玩家：</span>
+      <span id="activePlayer">1</span>
+    </div>
+
+    <div class="row">
+      <span>回合：</span>
+      <span id="turn">1</span>
+    </div>
+
+    <div class="row">
+      <span>骰子：</span>
+      <span id="dice">-</span>
+    </div>
+
+    <img id="diceGif" width="90" alt="dice" />
+
     <button id="roll">擲骰</button>
-</div>
+  </div>
 
-<canvas id="three"></canvas>
-<script type="module" src="main.js"></script>
+  <!-- 右上統計面板 -->
+  <div class="ui-right">
+    <div class="player-card active" id="p1Card">
+      <h3>玩家 1</h3>
+      <div>步數：<span id="p1Steps">0</span></div>
+    </div>
 
+    <div class="player-card" id="p2Card">
+      <h3>玩家 2</h3>
+      <div>步數：<span id="p2Steps">0</span></div>
+    </div>
+
+    <div class="player-card" id="p3Card">
+      <h3>玩家 3</h3>
+      <div>步數：<span id="p3Steps">0</span></div>
+    </div>
+  </div>
+
+  <canvas id="three"></canvas>
+
+  <!-- 小遊戲浮動視窗 -->
+  <div id="miniOverlay" aria-hidden="true">
+    <div id="miniWindow">
+      <div class="miniTopBar">
+        <div class="miniTitle">小遊戲</div>
+        <button id="closeMini" class="miniClose" title="關閉">✕</button>
+      </div>
+      <iframe id="miniFrame" title="miniGame"></iframe>
+    </div>
+  </div>
+
+  <script type="module" src="main.js"></script>
 </body>
 </html>

@@ -1,19 +1,154 @@
 body {
-    margin: 0;
-    overflow: hidden;
-    font-family: sans-serif;
-}
-
-.ui {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background: white;
-    padding: 10px;
-    border-radius: 8px;
-    z-index: 10;
+  margin: 0;
+  overflow: hidden;
+  font-family: system-ui, -apple-system, "PingFang TC", "Noto Sans TC", sans-serif;
 }
 
 canvas {
-    display: block;
+  display: block;
+}
+
+/* 左上面板 */
+.ui-left {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  width: 220px;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 16px;
+  padding: 14px 14px 12px;
+  box-shadow: 0 18px 60px rgba(0,0,0,0.18);
+  border: 1px solid rgba(0,0,0,0.06);
+  z-index: 10;
+  backdrop-filter: blur(10px);
+}
+
+.ui-left h2 {
+  margin: 0 0 10px;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.ui-left .row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  padding: 4px 0;
+  color: rgba(0,0,0,0.75);
+}
+
+#diceGif {
+  margin-top: 10px;
+  border-radius: 12px;
+  background: rgba(0,0,0,0.06);
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+}
+
+#roll {
+  margin-top: 10px;
+  width: 100%;
+  border: none;
+  background: rgba(0,0,0,0.92);
+  color: white;
+  font-weight: 900;
+  border-radius: 14px;
+  padding: 10px 12px;
+  cursor: pointer;
+}
+
+#roll:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* 右上面板 */
+.ui-right {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 230px;
+  display: grid;
+  gap: 10px;
+  z-index: 10;
+}
+
+.player-card {
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 16px;
+  padding: 12px 12px 10px;
+  box-shadow: 0 18px 60px rgba(0,0,0,0.14);
+  border: 1px solid rgba(0,0,0,0.06);
+  backdrop-filter: blur(10px);
+}
+
+.player-card h3 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.player-card div {
+  font-size: 13px;
+  color: rgba(0,0,0,0.75);
+}
+
+.player-card.active {
+  outline: 2px solid rgba(0, 0, 0, 0.85);
+}
+
+/* 小遊戲浮窗 */
+#miniOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.60);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+#miniWindow {
+  width: min(980px, 92vw);
+  height: min(640px, 86vh);
+  border-radius: 18px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.95);
+  box-shadow: 0 30px 90px rgba(0,0,0,0.45);
+  border: 1px solid rgba(255,255,255,0.18);
+}
+
+.miniTopBar {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  background: rgba(0,0,0,0.88);
+  color: #fff;
+}
+
+.miniTitle {
+  font-weight: 900;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+
+.miniClose {
+  border: none;
+  background: rgba(255,255,255,0.12);
+  color: white;
+  width: 34px;
+  height: 30px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+#miniFrame {
+  width: 100%;
+  height: calc(100% - 44px);
+  border: none;
+  background: white;
 }
